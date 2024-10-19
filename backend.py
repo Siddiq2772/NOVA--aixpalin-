@@ -7,7 +7,7 @@ import wikipedia
 import webbrowser
 import pywhatkit as kit
 import pygetwindow as gw
-import aiprocess as ap
+import aixplain_api as ap
 import AppOpener
 from aixplain_api2 import aispeechmode
 import time
