@@ -39,27 +39,27 @@ def sign_up(email, password, first_name, last_name, gender):
         # Create a new user in Firebase Authentication
         user = auth_client.create_user_with_email_and_password(email, password)
         user_id = user['localId']  # Get the user ID
-        # user_id=encrypt_data(user_id)
-        
-        # Store additional user details in Firestore
-        try:
-            db.collection('users').document(user_id).set({
-                'firstName': first_name,
-                'lastName': last_name,
-                'email': email,
-                'gender': gender
-            })
-            print(f"User details saved in Firestore for UID: {user_id}")
-        except Exception as e:
-            print(f"Error saving user details to Firestore: {e}")
-        
-        
 
-            with open("user_config.txt","w") as fw:
-                
-                fw.write(user_id)
+        print(f"User ID retrieved after sign-up: {user_id}")
+
+        # Store additional user details in Firestore
+        db.collection('users').document(user_id).set({
+            'firstName': first_name,
+            'lastName': last_name,
+            'email': email,
+            'gender': gender
+        })
+        print(f"User details saved in Firestore for UID: {user_id}")
+
+        # Write the user ID to user_config.txt
+        with open("user_config.txt", "w") as fw:
+            fw.write(user_id)
+        print(f"User ID written to user_config.txt: {user_id}")
+
         return user_id
     except Exception as e:
+        print(f"Error during sign-up: {e}")
+        traceback.print_exc()
         return str(e)
 
 
@@ -68,19 +68,22 @@ def log_in(email, password):
     global user_id
     try:
         # Log in the user using email and password
-        user=auth_client.sign_in_with_email_and_password(email, password)
+        user = auth_client.sign_in_with_email_and_password(email, password)
         user_id = user['localId']
-        # user_id=encrypt_data(user_id)
-        
-        with open("user_config.txt","w") as fw:
-           
+
+        print(f"User ID retrieved after login: {user_id}")
+
+        # Write the user ID to user_config.txt
+        with open("user_config.txt", "w") as fw:
             fw.write(user_id)
-        
-        
+        print(f"User ID written to user_config.txt: {user_id}")
+
         return user_id
     except Exception as e:
+        print(f"Error during login: {e}")
+        traceback.print_exc()
         return str(e)
-
+    
 def save_conversation(user_input, assistant_response):
     try:
         with open("user_config.txt", "r") as fr:
@@ -114,26 +117,29 @@ def get_conversations():
         if not conversations:
             print("No conversations found for this user.")
             return
+        else:
+            return conversations
         
-        for conv in conversations:
-            # Get the encrypted data as a string
-            encrypted_user_input = conv.to_dict().get('user_input')
-            encrypted_assistant_response = conv.to_dict().get('assistant_response')
+        # for conv in conversations:
+        #     # Get the encrypted data as a string
+        #     encrypted_user_input = conv.to_dict().get('user_input')
+        #     encrypted_assistant_response = conv.to_dict().get('assistant_response')
 
-            print(f"Encrypted User Input: {encrypted_user_input}")
-            print(f"Encrypted Assistant Response: {encrypted_assistant_response}")
+        #     print(f"Encrypted User Input: {encrypted_user_input}")
+        #     print(f"Encrypted Assistant Response: {encrypted_assistant_response}")
 
-            try:
-                # Decrypt the data
-                user_input = decrypt_data(encrypted_user_input.encode('utf-8')) if isinstance(encrypted_user_input, str) else decrypt_data(encrypted_user_input)
-                assistant_response = decrypt_data(encrypted_assistant_response.encode('utf-8')) if isinstance(encrypted_assistant_response, str) else decrypt_data(encrypted_assistant_response)
+        #     try:
+        #         # Decrypt the data
+        #         user_input = decrypt_data(encrypted_user_input.encode('utf-8')) if isinstance(encrypted_user_input, str) else decrypt_data(encrypted_user_input)
+        #         assistant_response = decrypt_data(encrypted_assistant_response.encode('utf-8')) if isinstance(encrypted_assistant_response, str) else decrypt_data(encrypted_assistant_response)
                 
-                print(f"User Input: {user_input}")
-                print(f"Assistant Response: {assistant_response}")
-                print(f"Timestamp: {conv.to_dict().get('timestamp')}")
-                print("-" * 20)
-            except Exception as decryption_error:
-                print(f"Decryption error for conversation ID {conv.id}: {decryption_error}")
+        #         print(f"User Input: {user_input}")
+        #         print(f"Assistant Response: {assistant_response}")
+        #         print(f"Timestamp: {conv.to_dict().get('timestamp')}")
+        #         print("-" * 20)
+        #         return {user_input,assistant_response}
+        #     except Exception as decryption_error:
+        #         print(f"Decryption error for conversation ID {conv.id}: {decryption_error}")
 
     except Exception as e:
         print(f"Error retrieving conversations: {e}")
@@ -160,7 +166,6 @@ def decrypt_data(encrypted_data):
 # sign_up("neser@example.com", "strongpassword123", "John", "Doe", "Male")
 
 # Log in the user
-# result=log_in("shady@gmail.com", "Shadab@1234")
-# print(result)
+# log_in("shady@gmail.com", "Shadab@1234")
 # save_conversation("this","i m kknoo")
-get_conversations()
+# get_conversations()
