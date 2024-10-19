@@ -9,7 +9,7 @@ import pywhatkit as kit
 import pygetwindow as gw
 import aiprocess as ap
 import AppOpener
-import gemini_ai
+from aixplain_api2 import aispeechmode
 import time
 import io
 from CustomMessageBox import CustomMessageBox,CustomInputBox
@@ -341,7 +341,7 @@ def close_apps(app_name):
         return f"Something went wrong {e}"
 
 def ai_mode(query):
-    result=gemini_ai.aispeechmode(query)
+    result=aispeechmode(query)
     return result
 
 def current_time():
