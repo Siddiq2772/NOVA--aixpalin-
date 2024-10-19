@@ -1,9 +1,9 @@
 
 import os
-os.environ["TEAM_API_KEY"] = "2a9a3205cb3017f0fee6f92389fa608ddf628deb9159f4a4f4f5ccb843b1c915"
+os.environ["TEAM_API_KEY"] = "a71cb641541aedfbdffdd8e4b32db084e96e4fadf1df3ca93899f7f6c57743a4"
 from aixplain.factories import AgentFactory
 import time
-
+from config import API_KEY
 
 
 def aispeechmode(query):
@@ -12,8 +12,8 @@ def aispeechmode(query):
     try:
         
         agent = AgentFactory.create(
-            name="NOVAAGENT2",
-            llm_id="669a63646eb56306647e1091",
+            name="NOVAAGENT3",
+            # llm_id=API_KEY,
             description="This agent is designed to answer questions and assist with tasks."
         )
 
@@ -45,6 +45,9 @@ def aispeechmode(query):
         agent.delete()
 
     return agent_response
+
+if __name__=="__main__":
+    print(aispeechmode(input("enter your  query:")))
 
 
 

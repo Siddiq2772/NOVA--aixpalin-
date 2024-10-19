@@ -3,7 +3,7 @@ from PyQt5 import QtCore,QtWidgets
 import sys
 
 class CustomMessageBox(QDialog):
-    def __init__(self, parent=None, text="", x=200, y=200, B1="OK", B2="Cancel"):
+    def __init__(self, parent=None, text="", x=400, y=400, B1="OK", B2="Cancel"):
         super().__init__(parent)
         self.setWindowTitle("Custom Message Box")
         
@@ -13,6 +13,7 @@ class CustomMessageBox(QDialog):
 
         # Label
         self.label = QLabel(text)
+        self.label.setWordWrap(True)
         self.label.setAlignment(QtCore.Qt.AlignCenter)  # Align text to center
         
         # Set the dialog's style
@@ -76,7 +77,7 @@ class CustomMessageBox(QDialog):
     #     self.close()
 
     @staticmethod
-    def show_message(parent=None,text="", x=200, y=200, B1="OK", B2="Cancel"):
+    def show_message(parent=None,text="", x=400, y=400, B1="OK", B2="Cancel"):
         dialog = CustomMessageBox(parent,text, x, y, B1, B2)
         result = dialog.exec_()  # Start the dialog event loop and get the result
         return result  # Return the result of the dialog
@@ -144,14 +145,23 @@ class CustomInputBox(QDialog):
         self.button_layout.addWidget(self.b2)
         
         # Connect button actions to close the dialog and set the result
-        self.b1.clicked.connect(self.accept)
-        self.b2.clicked.connect(self.reject)
+        self.b1.clicked.connect(self.ok_clicked)
+        self.b2.clicked.connect(self.cancel_clicked)
         
         # Add the button layout to the main layout
         self.layout.addLayout(self.button_layout)
         
         # Set the final layout
         self.setLayout(self.layout)
+    def ok_clicked(self):
+            self.done(1)  # Set dialog result to 1 for OK
+            self.close()
+
+    def cancel_clicked(self):
+            self.done(0)  # Set dialog result to 0 for Cancel
+            self.close()    
+
+
 
     
 

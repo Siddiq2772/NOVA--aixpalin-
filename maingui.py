@@ -213,7 +213,7 @@ class NovaInterface(QWidget):
 
         self.mute_button = QPushButton()
         self.mute_button.setStyleSheet(btnStyle)
-        self.mute_button.setIcon(QIcon('icons/mute.png'))
+        self.mute_button.setIcon(QIcon('icons/unmute.png'))
         self.mute_button.setIconSize(QSize(50, 50))
         self.mute_button.clicked.connect(self.toggle_mute)
 
@@ -350,9 +350,9 @@ class NovaInterface(QWidget):
         # Get the current mute state
         is_muted = volume.GetMute()
         if is_muted:
-            self.mute_button.setIcon(QIcon('icons/mute.png'))
-        else:
             self.mute_button.setIcon(QIcon('icons/unmute.png'))
+        else:
+            self.mute_button.setIcon(QIcon('icons/mute.png'))
             
         # Toggle the mute state
         volume.SetMute(not is_muted, None)
@@ -398,20 +398,6 @@ class NovaInterface(QWidget):
         self.chat_window.add_message(ret)
         speak(ret)
 
-    def send_message_(message):
-        number = CustomInputBox.show_input_dialog("Please provide the phone number to which I should send messages")
-        while (len(number)<=9):
-            number = CustomInputBox.show_input_dialog(f"The provided phone number have only {len(number)} digits Please Enter again")
-        
-        # speak("This process may take a few seconds and during this process i can't do any other work")
-        now = datetime.datetime.now()
-        future_time = now + datetime.timedelta(minutes=2)
-        time_hour = future_time.hour
-        time_minute = future_time.minute
-
-        country_code="+91"
-        number=f"{country_code}{number}"
-        kit.sendwhatmsg(number, message, time_hour, time_minute)
 
     
 #     result = CustomMessageBox.show_message(self,"Welcome to NOVA\n\nNOVA is an AI assistant which can control your desktop based on your command.")
@@ -425,6 +411,22 @@ class ChatThread(QThread):
     shutdown = pyqtSignal()
     sleep = pyqtSignal()
     send = pyqtSignal(str)
+    def send_message(self,message):
+                speak("Please provide the phone number to which I should send messages.")
+                number = CustomInputBox.show_input_dialog("Please provide the phone number to which I should send messages")
+                while (len(number)<=9):
+                    number = CustomInputBox.show_input_dialog(f"The provided phone number have only {len(number)} digits Please Enter again")
+        
+                
+                speak("This process may take a few seconds and during this process i can't do any other work")
+                now = datetime.datetime.now()
+                future_time = now + datetime.timedelta(minutes=2)
+                time_hour = future_time.hour
+                time_minute = future_time.minute
+
+                country_code="+91"
+                number=f"{country_code}{number}"
+                kit.sendwhatmsg(number, message, time_hour, time_minute)
 
     def __init__(self,obj):
         super().__init__()
@@ -443,7 +445,7 @@ class ChatThread(QThread):
                 # Decrypt the data
                     user_input = db.decrypt_data(encrypted_user_input.encode('utf-8')) if isinstance(encrypted_user_input, str) else db.decrypt_data(encrypted_user_input)
                     assistant_response = db.decrypt_data(encrypted_assistant_response.encode('utf-8')) if isinstance(encrypted_assistant_response, str) else db.decrypt_data(encrypted_assistant_response)
-                    self.message_received.emit(user_input)
+                    self.message_received.emit("You:"+user_input)
                     self.message_received.emit(assistant_response)
                 except Exception as decryption_error:
                     print(f"Decryption error for conversation ID {conv.id}: {decryption_error}")
@@ -454,6 +456,7 @@ class ChatThread(QThread):
         speak("How can I help you, Sir?")
         if toggleMic:
          self.message_received.emit("Listening...")
+        
         while True:    
             if toggleMic and not b.mic_off:
                 query = takecmd().lower()
@@ -480,18 +483,20 @@ class ChatThread(QThread):
                 result = "sleeping your computer"
 
             if result.__contains__("sending  message"): 
-                self.send.emit(result)
+                self.send_message(result.replace("sending  message","",1))
+                
                 # result = "message send" 
 
             self.message_received.emit(result)
-            speak(result)
             db.save_conversation(query,result)
+            speak(result)
             prompt ="none"
             time.sleep(1)
             speak("Sir, Do you have any other work")
             if toggleMic:
                 self.micon.emit()
             time.sleep(1)
+        
 
     
             
@@ -507,6 +512,5 @@ if __name__ == '__main__':
     chat_thread.restart.connect(ex.restart_)
     chat_thread.shutdown.connect(ex.shutdown_)
     chat_thread.sleep.connect(ex.sleep_)
-    chat_thread.send.connect(ex.send_message_)
     chat_thread.start()
     sys.exit(app.exec_())

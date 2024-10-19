@@ -3,11 +3,11 @@ from firebase_admin import credentials, auth, firestore
 import pyrebase
 from datetime import datetime
 from cryptography.fernet import Fernet
-from config import KEY
+from config import KEY,FKEY,AUTHDOMAIN,STORAGEBUCKET,PROJECTID
 import traceback
 
 # Initialize Firebase Admin SDK with your service account
-cred = credentials.Certificate("desktop-assistant-c7034-firebase-adminsdk-oz26k-6bfdf9cd28.json")
+cred = credentials.Certificate("desktop-assistant-f315e-firebase-adminsdk-ilw8c-fb4eac3517.json")
 firebase_admin.initialize_app(cred)
 
 # Initialize Firestore
@@ -15,20 +15,30 @@ db = firestore.client()
 
 # Firebase client configuration
 firebase_config = {
-    "apiKey": "AIzaSyBkzF1tp-VM9VX1A0f6LN_yx7Q29_XWJcs",
-    "authDomain": "desktop-assistant-c7034.firebaseapp.com",
-    "projectId": "desktop-assistant-c7034",
+    "apiKey": FKEY,
+    "authDomain": AUTHDOMAIN,
+    "projectId": PROJECTID,
     "databaseURL": "https://dummy-url.firebaseio.com",  # Placeholder URL
-    "storageBucket": "desktop-assistant-a066c.appspot.com",
+    "storageBucket": STORAGEBUCKET,
     "messagingSenderId": "YOUR_MESSAGING_SENDER_ID",
     "appId": "YOUR_APP_ID"
 }
 
-# Initialize Firebase for client-side operations (Pyrebase)
 firebase = pyrebase.initialize_app(firebase_config)
 auth_client = firebase.auth()
 
-key=KEY
+key = KEY
+fernet = Fernet(key)
+
+
+# Encrypt function using the single key
+def encrypt_data(data):
+    return fernet.encrypt(data.encode())
+
+
+# Decrypt function using the single key
+def decrypt_data(encrypted_data):
+    return fernet.decrypt(encrypted_data).decode()
 
 
 # Sign-Up Function
@@ -56,7 +66,7 @@ def sign_up(email, password, first_name, last_name, gender):
             fw.write(user_id)
         print(f"User ID written to user_config.txt: {user_id}")
 
-        return user_id
+        return 0
     except Exception as e:
         print(f"Error during sign-up: {e}")
         traceback.print_exc()
@@ -78,7 +88,7 @@ def log_in(email, password):
             fw.write(user_id)
         print(f"User ID written to user_config.txt: {user_id}")
 
-        return user_id
+        return 0
     except Exception as e:
         print(f"Error during login: {e}")
         traceback.print_exc()

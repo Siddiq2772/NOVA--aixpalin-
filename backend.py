@@ -409,7 +409,8 @@ command_actions={
 def input_from_gui(user_input,self):
     global obj
     obj=self
-    query=ap.processcmd(user_input)
+    
+    query=ap.aiprocess(user_input)
     command,param=process_airesponse(query)
     
     if command==None and param==None:
@@ -437,7 +438,7 @@ def microphone():
             user_query=query
             if query=="none":
                 continue
-            query=ap.processcmd(query)
+            query=ap.aiprocess(query)
             command,param=process_airesponse(query)
             
             if command==None and param==None:
@@ -464,7 +465,7 @@ def keyboard():
             query =input("Enter your query: ")
             if query=="none":
                 continue
-            query=ap.processcmd(query)
+            query=ap.aiprocess(query)
             command,param=process_airesponse(query)
             
             if command==None and param==None:
