@@ -81,7 +81,7 @@ def aiprocess(command):
 
     try:
         agent = AgentFactory.create(
-            name="NOVAagent2",
+            name="NOVAagent",
             llm_id='669a63646eb56306647e1091',
             description="This agent is designed to answer questions and assist with tasks."
         )

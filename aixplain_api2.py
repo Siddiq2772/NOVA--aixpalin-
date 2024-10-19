@@ -12,7 +12,7 @@ def aispeechmode(query):
     try:
         
         agent = AgentFactory.create(
-            name="NOVAAGENT",
+            name="NOVAAGENT2",
             llm_id="669a63646eb56306647e1091",
             description="This agent is designed to answer questions and assist with tasks."
         )
