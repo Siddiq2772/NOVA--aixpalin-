@@ -276,7 +276,7 @@ Let NOVA handle the details, so you can focus on what matters!
 """,B1="learn More",B2="Launch Nova"))
             if r :
                 print("User clicked learn more")
-                webbrowser.open("https://github.com/Siddiq2772/NOVA--aixpalin-.git")
+                webbrowser.open("https://github.com/Siddiq2772/NOVA_Developers_AICODEX.git")
                 QtWidgets.QApplication.quit()                 
                 subprocess.Popen(["python", "maingui.py"]) 
             else:
